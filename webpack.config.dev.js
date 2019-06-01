@@ -1,0 +1,148 @@
+'use strict'
+
+const { VueLoaderPlugin } = require('vue-loader')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const notifier = require('node-notifier');
+const path = require('path')
+
+module.exports = {
+  mode: 'development',
+  entry: [
+    './resources/js/app.js'
+  ],
+  output: {
+      path: path.resolve(__dirname, 'public'),
+  },
+  resolve: {
+    extensions: ['.vue', '.js', '.json', '.wasm', '.mjs'],
+    alias: {
+      '@': path.resolve(__dirname, 'resources/js')
+    }
+  },
+  stats: {
+    colors: true,
+    hash: false,
+    version: false,
+    timings: false,
+    assets: true,
+    builtAt: false,
+    entrypoints: false,
+    chunks: false,
+    modules: false,
+    reasons: false,
+    children: false,
+    source: false,
+    errors: false,
+    errorDetails: false,
+    warnings: false,
+    publicPath: false
+  },
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      },
+      {
+        test: /\.pug$/,
+        oneOf: [
+          {
+            resourceQuery: /^\?vue/,
+            use: ['pug-plain-loader']
+          },
+          {
+            use: ['raw-loader', 'pug-plain-loader']
+          }
+        ]
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: file => (
+          /node_modules/.test(file) &&
+          !/\.vue\.js/.test(file)
+        )
+      },
+      {
+        test: /\.css$/,
+        oneOf: [
+          // this matches `<style module>`
+          {
+            resourceQuery: /module/,
+            use: [
+              'vue-style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  localIdentName: '[local]_[hash:base64:5]'
+                }
+              }
+            ]
+          },
+          // this matches plain `<style>` or `<style scoped>`
+          {
+            use: [
+              'vue-style-loader',
+              'css-loader'
+            ]
+          }
+        ]
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: [
+          'vue-style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          'postcss-loader',
+          {
+            loader: 'stylus-loader' ,
+            options: {
+              import: path.resolve(__dirname, 'resources/stylus/transparent.styl')
+            }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new FriendlyErrorsWebpackPlugin({
+      compilationSuccessInfo: {
+        // messages: ['You application is running here http://localhost:3000'],
+        // notes: ['Some additional notes to be displayed upon successful compilation']
+      },
+      onErrors: function (severity, errors) {
+        // You can listen to errors transformed and prioritized by the plugin
+        // severity can be 'error' or 'warning'
+        if (severity !== 'error') {
+          return;
+        }
+        const error = errors[0];
+        notifier.notify({
+          title: "Webpack error :(",
+          subtitle: error.file || '',
+          message: severity + ': ' + error.name,
+          // icon: ICON
+        });
+      },
+      // should the console be cleared between each compilation?
+      // default is true
+      clearConsole: true,
+
+      // add formatters and transformers (see below)
+      additionalFormatters: [],
+      additionalTransformers: []
+    }),
+    new VueLoaderPlugin(),
+    new ManifestPlugin({
+      fileName: 'mix-manifest.json',
+      basePath: '/'
+    })
+  ]
+}

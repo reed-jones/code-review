@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/{catchall?}', 'Web\AppController@show')
+  ->where('catchall', '^(?!api).*$')
+  ->name('app');

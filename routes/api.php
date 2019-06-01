@@ -16,3 +16,8 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::get('redirect/{provider}', 'Auth\LoginController@getProviderRedirect');
+    Route::get('callback/{provider}', 'Auth\LoginController@getProviderCallback');
+});
