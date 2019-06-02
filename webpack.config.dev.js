@@ -122,20 +122,45 @@ module.exports = {
       },
       {
         test: /\.styl(us)?$/,
-        use: [
-          'vue-style-loader',
+        oneOf: [
+          // this matches `<style module>`
           {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1
-            }
-          },
-          'postcss-loader',
-          {
-            loader: 'stylus-loader' ,
-            options: {
-              import: path.resolve(__dirname, 'resources/stylus/transparent.styl')
-            }
+            resourceQuery: /module/,
+            use: [
+              'vue-style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  modules: true,
+                  localIdentName: '[local]_[hash:base64:5]',
+                  importLoaders: 1
+                }
+              },
+              'postcss-loader',
+              {
+                loader: 'stylus-loader' ,
+                options: {
+                  import: path.resolve(__dirname, 'resources/stylus/transparent.styl')
+                }
+              }
+            ]
+          }, {
+            use: [
+              'vue-style-loader',
+              {
+                loader: 'css-loader',
+                options: {
+                  importLoaders: 1
+                }
+              },
+              'postcss-loader',
+              {
+                loader: 'stylus-loader' ,
+                options: {
+                  import: path.resolve(__dirname, 'resources/stylus/transparent.styl')
+                }
+              }
+            ]
           }
         ]
       }
