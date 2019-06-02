@@ -13,12 +13,22 @@ module.exports = {
   ],
   output: {
       path: path.resolve(__dirname, 'public'),
+      hotUpdateChunkFilename: 'hmr/[id].[hash].hot-update.js',
+      hotUpdateMainFilename: 'hmr/[hash].hot-update.json'
   },
   resolve: {
     extensions: ['.vue', '.js', '.json', '.wasm', '.mjs'],
     alias: {
       '@': path.resolve(__dirname, 'resources/js')
     }
+  },
+  devServer: {
+    writeToDisk: true,
+    public: 'localhost:8081',
+    publicPath: '/', // changes location of main,js
+    disableHostCheck: true,
+    hot: true,
+    inline: true
   },
   stats: {
     colors: true,

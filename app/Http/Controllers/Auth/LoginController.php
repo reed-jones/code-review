@@ -50,7 +50,8 @@ class LoginController extends Controller
      */
     public function getProviderRedirect(Provider $provider)
     {
-        return Socialite::driver($provider->driver)->stateless()->redirect();
+        return Socialite::driver($provider->driver)
+        ->scopes($provider->scopes->pluck('scope')->toArray())->stateless()->redirect();
     }
 
     /**
@@ -61,9 +62,17 @@ class LoginController extends Controller
     public function getProviderCallback(Provider $provider)
     {
         try {
+            $socialUser = Socialite::driver($provider->driver)
+                ->stateless()
+                ->user();
 
-
-            $socialUser = Socialite::driver($provider->driver)->stateless()->user();
+            if (!$socialUser->getEmail()) {
+                // sometimes github api returns user object wih email being null?
+                $socialUser = Socialite::driver($provider->driver)->stateless()->user();
+                if (!$socialUser->getEmail()) {
+                    throw new Exception('User Did not have email for some reason');
+                }
+            }
             $user = User::where('email', $socialUser->email)->first();
 
             if (!$user) {
@@ -83,13 +92,19 @@ class LoginController extends Controller
             ])->first();
 
             if (!$existingProvider) {
-                $user->providers()->attach($provider);
+                $user->providers()->attach($provider, [
+                    'socialite_id' => $socialUser->getId(),
+                    'token' => $socialUser->token,
+                    'refresh_token' => $socialUser->refreshToken ?? null,
+                    'token_secret' => $socialUser->tokenSecret ?? null,
+                    'expires_in' => $socialUser->expiresIn ?? null
+                ]);
             }
 
             $token = auth()->login($user);
 
             return view('auth.callback', [
-                'user' => $socialUser,
+                'user' => $user,
                 'auth' => [
                     'access_token' => $token,
                     'token_type' => 'bearer',
@@ -97,7 +112,7 @@ class LoginController extends Controller
                 ]
             ]);
         } catch (\Exception $err) {
-            dd($socialUser, $user, $provider);
+            dump($err);
          }
     }
 }

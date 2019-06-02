@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name') }}</title>
-        <script src="{{ mix('/main.js') }}" async defer></script>
+        <script src="http://localhost:8081/main.js" async defer></script>
     </head>
     <body>
         <div id="app"></div>

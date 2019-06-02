@@ -24,4 +24,12 @@ class Provider extends Model
         return $this->belongsToMany('App\Models\User')
             ->using('App\Models\ProviderUser');
     }
+
+    /**
+     * Get the scopes for the provider.
+     */
+    public function scopes()
+    {
+        return $this->hasMany('App\Models\Scope');
+    }
 }

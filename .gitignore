@@ -1,5 +1,10 @@
 /node_modules
 /public/hot
+/public/hmr
+/public/**/*.json
+/public/**/*.js
+/public/**/*.css
+/public/chunks
 /public/storage
 /storage/*.key
 /vendor

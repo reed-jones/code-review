@@ -16,13 +16,11 @@ class CreateProviderUserTable extends Migration
         Schema::create('provider_user', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('provider_id');
-            // $table->string('supplied_id'); // provider id (github, gitlab, bitbucket etc)
-            // $table->string('nickname');
-            // $table->string('avatar');
-            // $table->string('token');
-            // $table->string('refresh_token');
-            // $table->string('token_secret');
-            // $table->string('expires_in');
+            $table->string('socialite_id'); // provider id (github, gitlab, bitbucket etc)
+            $table->string('token');
+            $table->string('refresh_token')->nullable();
+            $table->string('token_secret')->nullable();
+            $table->string('expires_in')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

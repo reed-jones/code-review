@@ -1,56 +1,87 @@
-import Axios from "axios";
 
-const state = {
-  // maybe tokens & user should be split up into nested modules (auth.tokens.access_token etc)
-  tokens: {
-    access_token: null,
-    refresh_token: null,
-    token_type: null,
-    expires_at: null,
-  },
-  user: {
-    email: null,
-    avatar: null,
-    name: null,
-    nickname: null,
+
+
+// sub-modules
+const defaultTokenState = _ => ({
+  access_token: null,
+  refresh_token: null,
+  isTrusted: null,
+  token_type: null,
+  expires_at: null,
+})
+const tokens = {
+  namespaced: true,
+  state: defaultTokenState(),
+  mutations: {
+    SET_OR_RESET(state, newState = null) {
+      state = Object.assign(state, newState || defaultTokenState())
+    }
   }
 }
+
+const defaultUserState = _ => ({
+  email: null,
+  avatar: null,
+  name: null,
+  nickname: 'test',
+})
+const user = {
+  namespaced: true,
+  state: defaultUserState(),
+  mutations: {
+    SET_OR_RESET(state, newState = null) {
+      state = Object.assign(state, newState || defaultUserState())
+    }
+  },
+}
+
+// Base Module
+const defaultAuthState = _ => ({
+  //
+})
 
 const getters = {
   //
 }
 
 const mutations = {
-  SET_AUTH_TOKENS(state, tokens) {
-    Object.assign(state.tokens, tokens)
-  },
-  SET_USER_DETAILS (state, user) {
-    Object.assign(state.user, user)
-  }
+
 }
-
-
-let types = Object.entries(mutations).reduce((acc, [key, value]) => ({ ...acc, [key]: key }), {})
+// let types = Object.entries(mutations).reduce((acc, [key, value]) => ({ ...acc, [key]: key }), {})
 
 const actions = {
-  async login({}, { provider }) {
-    let { data } = await Axios.get(`/api/auth/redirect/${provider}`)
-  },
-
   setAuthTokens({ commit }, tokens) {
-    commit(types.SET_AUTH_TOKENS, tokens)
+    commit('tokens/SET_OR_RESET', tokens)
+    sessionStorage.setItem('auth.tokens', JSON.stringify(tokens));
   },
 
   setUserDetails({ commit }, user) {
 
-    commit(types.SET_USER_DETAILS, user)
+    commit('user/SET_OR_RESET', user)
+  },
+
+  checkSessionStorageForAuthentication({ commit }) {
+    let tokens = sessionStorage.getItem('auth.tokens');
+    if(tokens) {
+      commit('tokens/SET_OR_RESET', JSON.parse(tokens))
+    }
+  },
+
+  logout({ commit }) {
+    commit('tokens/SET_OR_RESET')
+    commit('user/SET_OR_RESET')
+    sessionStorage.clear()
   }
 }
 
 export default {
   namespaced: true,
-  state,
+  state: defaultAuthState(),
   getters,
   mutations,
-  actions
+  actions,
+  modules: {
+    tokens,
+    user
+  }
 }

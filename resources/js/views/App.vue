@@ -6,13 +6,24 @@
 </template>
 
 <script>
-import NavBar from '../components/navigation/NavBar'
+// import { mapActions } from 'vuex';
+import NavBar from '../components/navigation/NavBar';
+
 export default {
   components: {
     NavBar
   },
+  created() {
+    // this.checkAuth()
+    console.log('blah')
+  },
   mounted() {
-    //
+    setTimeout(_ => {
+      this.$store.dispatch('auth/logout')
+    }, 4000)
+  },
+  methods: {
+    // ...mapActions('auth', ['checkAuth'])
   }
 }
 </script>

@@ -13,4 +13,5 @@
 
 Route::get('/{catchall?}', 'Web\AppController@show')
   ->where('catchall', '^(?!api).*$')
+  // ->where('catchall', '^(?!hmr).*$')
   ->name('app');
