@@ -2,19 +2,23 @@
 
 const { VueLoaderPlugin } = require('vue-loader')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const WebpackShellPlugin = require('webpack-shell-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const notifier = require('node-notifier');
 const path = require('path')
+const rimraf = require("rimraf");
+
 
 module.exports = {
   mode: 'development',
-  entry: [
-    './resources/js/app.js'
-  ],
+  entry: {
+    'js/main': './resources/js/main'
+  },
   output: {
       path: path.resolve(__dirname, 'public'),
-      hotUpdateChunkFilename: 'hmr/[id].[hash].hot-update.js',
-      hotUpdateMainFilename: 'hmr/[hash].hot-update.json'
+      publicPath: '/',
+      hotUpdateChunkFilename: 'hot/[id].[hash].hot-update.js',
+      hotUpdateMainFilename: 'hot/[hash].hot-update.json'
   },
   resolve: {
     extensions: ['.vue', '.js', '.json', '.wasm', '.mjs'],
@@ -24,11 +28,27 @@ module.exports = {
   },
   devServer: {
     writeToDisk: true,
-    public: 'localhost:8081',
-    publicPath: '/', // changes location of main,js
+    quiet: true,
+    public: 'localhost:8080', // un-changable due to Laravel dependency
+    host: '0.0.0.0',
+    overlay: {
+      warnings: false,
+      errors: true
+    },
+    publicPath: '/',
     disableHostCheck: true,
     hot: true,
-    inline: true
+    inline: true,
+    before: _ => {
+      // create 'public/hot' folder so Laravel's 'mix' function
+      // redirects to localhost:8080
+      const fs = require('fs');
+      const dir = path.resolve(__dirname, 'public', 'hot');
+
+      if (!fs.existsSync(dir)){
+          fs.mkdirSync(dir);
+      }
+    }
   },
   stats: {
     colors: true,
@@ -122,6 +142,13 @@ module.exports = {
     ]
   },
   plugins: [
+    new WebpackShellPlugin({
+      onBuildStart:['node -e ' + (() => {
+        rimraf.sync(path.resolve(__dirname, 'public', 'chunks'));
+        rimraf.sync(path.resolve(__dirname, 'public', 'hot'));
+        rimraf.sync(path.resolve(__dirname, 'public', 'js'));
+      })() ]
+    }),
     new FriendlyErrorsWebpackPlugin({
       compilationSuccessInfo: {
         // messages: ['You application is running here http://localhost:3000'],

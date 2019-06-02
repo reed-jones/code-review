@@ -15,7 +15,6 @@ export default {
   },
   created() {
     // this.checkAuth()
-    console.log('blah')
   },
   mounted() {
     setTimeout(_ => {
