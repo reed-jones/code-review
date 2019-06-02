@@ -1,8 +1,8 @@
 <template lang="pug">
 div(:class="$style.navbar")
-  .left
+  div(:class="$style.left")
     | Code Review
-  .right
+  div(:class="$style.right")
     button(@click="$modals.show('code-review/modals/LoginModal')") Sign In
     h3 {{ $store.state.auth.user.email }}
     h3 {{ $store.state.auth.tokens.access_token }}
@@ -10,8 +10,12 @@ div(:class="$style.navbar")
 
 <style lang="stylus" module>
 .navbar
-  display flex
-  flex-flow row wrap
-  align-items center
-  justify-content space-between
+  flex(row wrap, center, space-between)
+  background rgba(grey, 0.25)
+
+.left,
+.right
+  flex(row wrap, center, center)
+  margin 1rem
+
 </style>

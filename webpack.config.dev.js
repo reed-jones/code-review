@@ -8,7 +8,6 @@ const notifier = require('node-notifier');
 const path = require('path')
 const rimraf = require("rimraf");
 
-
 module.exports = {
   mode: 'development',
   entry: {

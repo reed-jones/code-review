@@ -6,28 +6,18 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex';
 import NavBar from '../components/navigation/NavBar';
 
 export default {
   components: {
     NavBar
   },
-  created() {
-    // this.checkAuth()
-  },
-  mounted() {
-    setTimeout(_ => {
-      this.$store.dispatch('auth/logout')
-    }, 4000)
-  },
-  methods: {
-    // ...mapActions('auth', ['checkAuth'])
-  }
 }
 </script>
 
 <style lang="stylus">
-// .page
-  // background #000
+html,
+body
+  margin 0
+  font-size 16px
 </style>

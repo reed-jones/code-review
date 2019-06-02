@@ -7,6 +7,7 @@ import App from './views/App.vue'
 import router from './router'
 import store from './store'
 import modals from './modals'
+import apolloProvider from './apolloProvider'
 
 // restores previously saved auth tokens if needed
 // might be nice to have a vuex plugin that auto
@@ -25,6 +26,7 @@ const VueConfig = {
     el,
     router,
     store,
+    apolloProvider,
     modals,
     render
 }
