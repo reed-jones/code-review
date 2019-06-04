@@ -1,3 +1,5 @@
+// need to import('dotenv')
+
 module.exports = {
   client: {
     service: {
@@ -5,6 +7,7 @@ module.exports = {
       // URL to the GraphQL API
       url: 'http://cr.test/graphql',
     },
+
     // Files processed by the extension
     includes: [
       'resources/**/*.vue',
