@@ -1,12 +1,15 @@
 'use strict'
 
 const { VueLoaderPlugin } = require('vue-loader')
+const webpack = require('webpack')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const notifier = require('node-notifier');
 const path = require('path')
 const rimraf = require("rimraf");
+
+require('dotenv-expand')(require('dotenv').config())
 
 module.exports = {
   mode: 'development',
@@ -166,6 +169,15 @@ module.exports = {
     ]
   },
   plugins: [
+
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify({
+        ...Object.entries(process.env)
+          .filter(a => a[0].startsWith('MIX_'))
+          .reduce((a, c) => ({ ...a, [c[0]]: c[1] }), {}),
+        NODE_ENV: process.env.NODE_ENV
+      })
+    }),
     new WebpackShellPlugin({
       onBuildStart:['node -e ' + (() => {
         rimraf.sync(path.resolve(__dirname, 'public', 'chunks'));

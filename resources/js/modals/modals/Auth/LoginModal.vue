@@ -18,10 +18,9 @@ export default {
 
   methods: {
     login({ provider }) {
-
       if (this.windowObjectReference === null || this.windowObjectReference.closed) {
         this.windowObjectReference = window.open(
-          `http://cr.test/api/auth/redirect/${provider}`,
+          `${process.env.MIX_APP_URL}/api/auth/redirect/${provider}`,
           this.popup.title,
           this.popup.features
         );
@@ -64,5 +63,3 @@ export default {
     padding 2rem
     background #fff
 </style>
-
-

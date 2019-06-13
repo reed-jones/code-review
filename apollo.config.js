@@ -1,11 +1,11 @@
-// need to import('dotenv')
+require('dotenv').config()
 
 module.exports = {
   client: {
     service: {
       name: 'code-review',
       // URL to the GraphQL API
-      url: 'http://cr.test/graphql',
+      url: `${process.env.APP_URL}/graphql`,
     },
 
     // Files processed by the extension

@@ -62,7 +62,7 @@ const actions = {
 
   checkSessionStorageForAuthentication({ commit }) {
     let tokens = sessionStorage.getItem('auth.tokens');
-    if(tokens) {
+    if(tokens && tokens !== 'undefined') {
       commit('tokens/SET_OR_RESET', JSON.parse(tokens))
     }
   },
